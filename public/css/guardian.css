@@ -1,0 +1,195 @@
+/**
+ * MediTrack - Guardian Portal Styles (Caregiver Command Center)
+ * Detailed metrics, adherence monitoring, inventory control & prescription vault
+ */
+
+.guardian-nav-tabs {
+  background: var(--bg-card);
+  padding: 8px;
+  border-radius: 18px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 24px;
+}
+
+.guardian-nav-tabs .nav-link {
+  font-size: 1.0em;
+  font-weight: 700;
+  color: var(--text-secondary);
+  border-radius: 12px;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.guardian-nav-tabs .nav-link:hover {
+  background: var(--teal-light);
+  color: var(--teal-primary);
+}
+
+.guardian-nav-tabs .nav-link.active {
+  background: var(--teal-primary);
+  color: #FFFFFF;
+}
+
+/* Guardian Alert Banners */
+.guardian-alert-card {
+  border-radius: 16px;
+  padding: 16px 20px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  border-left: 6px solid;
+}
+
+.guardian-alert-card.alert-urgent {
+  background: #FEF2F2;
+  border-color: #DC2626;
+  color: #991B1B;
+}
+
+.guardian-alert-card.alert-warning {
+  background: #FFFBEB;
+  border-color: #D97706;
+  color: #92400E;
+}
+
+.guardian-alert-card.alert-info {
+  background: #EFF6FF;
+  border-color: #2563EB;
+  color: #1E40AF;
+}
+
+.guardian-alert-icon {
+  font-size: 1.6em;
+  line-height: 1;
+}
+
+/* Stat Widgets */
+.guardian-stat-widget {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.guardian-stat-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6em;
+  flex-shrink: 0;
+}
+
+.stat-icon-teal { background: var(--teal-light); color: var(--teal-primary); }
+.stat-icon-sage { background: var(--sage-light); color: var(--sage-primary); }
+.stat-icon-amber { background: #FEF3C7; color: #D97706; }
+.stat-icon-red { background: #FEE2E2; color: #DC2626; }
+
+/* Stock Management Table */
+.table-meditrack {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.table-meditrack th {
+  background: var(--bg-warm);
+  color: var(--text-primary);
+  font-weight: 800;
+  padding: 14px 16px;
+  border-bottom: 2px solid var(--border-subtle);
+}
+
+.table-meditrack td {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-subtle);
+  vertical-align: middle;
+}
+
+.table-meditrack tr:last-child td {
+  border-bottom: none;
+}
+
+.table-meditrack tr:hover td {
+  background: #FAF8F5;
+}
+
+/* Prescription Card */
+.prescription-vault-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 20px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.prescription-vault-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.rx-doc-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #16A34A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5em;
+  flex-shrink: 0;
+}
+
+/* Timeline Components */
+.timeline-list {
+  position: relative;
+  padding-left: 28px;
+}
+
+.timeline-list::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 10px;
+  width: 3px;
+  background: var(--border-subtle);
+}
+
+.timeline-entry {
+  position: relative;
+  margin-bottom: 24px;
+}
+
+.timeline-entry-dot {
+  position: absolute;
+  left: -28px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--teal-primary);
+  border: 3px solid #FFFFFF;
+  box-shadow: 0 0 0 2px var(--teal-primary);
+}

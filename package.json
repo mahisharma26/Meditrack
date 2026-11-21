@@ -4,6 +4,7 @@
   "description": "MediTrack - Your Family's Medication Companion (Elderly-First Healthcare App)",
   "private": true,
   "scripts": {
+    "build": "node verify.js",
     "test": "node test_auth_flow.js",
     "verify": "node verify.js"
   }

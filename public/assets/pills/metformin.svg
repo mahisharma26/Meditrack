@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="100%" height="100%">
+  <defs>
+    <radialGradient id="metforminGlow" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="70%" stop-color="#f0f3f5"/>
+      <stop offset="100%" stop-color="#d9e0e4"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#1a3b38" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <!-- Background disc for contrast -->
+  <circle cx="100" cy="100" r="92" fill="#E8F1EF"/>
+  <!-- Oval Scored Pill -->
+  <g transform="rotate(-30 100 100)" filter="url(#shadow)">
+    <!-- Base body -->
+    <rect x="45" y="70" width="110" height="60" rx="30" fill="url(#metforminGlow)" stroke="#c2ccd1" stroke-width="2"/>
+    <!-- Center Score Line -->
+    <line x1="100" y1="72" x2="100" y2="128" stroke="#a0adb5" stroke-width="2.5" stroke-linecap="round"/>
+    <!-- Debossed Text -->
+    <text x="73" y="105" font-family="Arial, sans-serif" font-size="11" font-weight="bold" fill="#8898a3" text-anchor="middle">500</text>
+    <text x="127" y="105" font-family="Arial, sans-serif" font-size="10" font-weight="bold" fill="#8898a3" text-anchor="middle">MET</text>
+    <!-- Highlight shine -->
+    <path d="M 60 76 Q 100 74 140 76" stroke="#ffffff" stroke-width="3" stroke-linecap="round" fill="none" opacity="0.9"/>
+  </g>
+</svg>

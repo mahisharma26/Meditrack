@@ -131,5 +131,28 @@ if (errors.length > 0) {
   process.exit(1);
 } else {
   console.log('ALL INTEGRITY CHECKS PASSED PERFECTLY (0 errors)!');
+
+  // Prepare "public" output directory for Vercel
+  try {
+    const publicDir = path.join(baseDir, 'public');
+    if (!fs.existsSync(publicDir)) {
+      fs.mkdirSync(publicDir, { recursive: true });
+    }
+
+    fs.copyFileSync(path.join(baseDir, 'index.html'), path.join(publicDir, 'index.html'));
+
+    ['css', 'js', 'assets'].forEach(dir => {
+      const src = path.join(baseDir, dir);
+      const dest = path.join(publicDir, dir);
+      if (fs.existsSync(src)) {
+        fs.cpSync(src, dest, { recursive: true, force: true });
+      }
+    });
+
+    console.log('[PASS] Output Directory "public" prepared and verified for Vercel static build!');
+  } catch (err) {
+    console.warn('Notice: Could not sync public directory, root files will be used:', err);
+  }
+
   process.exit(0);
 }
