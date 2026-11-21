@@ -1,0 +1,290 @@
+/**
+ * MediTrack - Patient Portal Styles (Elderly-First UX)
+ * High readability, oversized action targets, calm sage & teal aesthetic
+ */
+
+/* Patient Top Navigation Pills */
+.patient-nav-tabs {
+  background: var(--bg-card);
+  padding: 8px;
+  border-radius: 20px;
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.patient-nav-tabs .nav-link {
+  font-size: 1.1em;
+  font-weight: 800;
+  color: var(--text-secondary);
+  border-radius: 14px;
+  padding: 12px 20px;
+  border: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.patient-nav-tabs .nav-link:hover {
+  background: var(--teal-light);
+  color: var(--teal-primary);
+}
+
+.patient-nav-tabs .nav-link.active {
+  background: var(--teal-primary);
+  color: #FFFFFF;
+  border-color: var(--teal-dark);
+}
+
+/* Patient Hero Card (Next Scheduled Medicine) */
+.hero-next-dose-card {
+  background: linear-gradient(145deg, #FFFFFF 0%, #F5FBF9 100%);
+  border: 3px solid var(--sage-border);
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 10px 30px rgba(32, 112, 116, 0.08);
+  margin-bottom: 30px;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-next-dose-card.due-urgent {
+  border-color: #F87171;
+  background: linear-gradient(145deg, #FFFFFF 0%, #FEF2F2 100%);
+}
+
+.hero-pill-preview {
+  width: 140px;
+  height: 140px;
+  border-radius: 24px;
+  background: #FFFFFF;
+  border: 2px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  box-shadow: var(--shadow-subtle);
+  flex-shrink: 0;
+}
+
+.hero-pill-preview img,
+.hero-pill-preview svg {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.hero-time-badge {
+  font-size: 1.25em;
+  font-weight: 800;
+  padding: 8px 18px;
+  border-radius: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.hero-time-badge.badge-due {
+  background: var(--bg-warning);
+  color: var(--color-warning);
+  border: 1px solid var(--border-warning);
+}
+.hero-time-badge.badge-upcoming {
+  background: var(--teal-light);
+  color: var(--teal-primary);
+}
+.hero-time-badge.badge-taken {
+  background: var(--bg-success);
+  color: var(--color-success);
+}
+
+/* The Three Large Primary Action Buttons */
+.patient-action-grid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 16px;
+  margin-top: 24px;
+}
+
+@media (max-width: 768px) {
+  .patient-action-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-action-taken {
+  background: #256E42;
+  color: #FFFFFF;
+  font-size: 1.35em;
+  font-weight: 900;
+  min-height: 72px;
+  border-radius: 20px;
+  border: 3px solid #1B5231;
+  box-shadow: 0 6px 16px rgba(37, 110, 66, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background 0.2s ease;
+}
+.btn-action-taken:hover {
+  background: #1B5231;
+  color: #FFFFFF;
+}
+.btn-action-taken:active {
+  transform: scale(0.98);
+}
+
+.btn-action-later {
+  background: #FFFBEB;
+  color: #92400E;
+  font-size: 1.15em;
+  font-weight: 800;
+  min-height: 72px;
+  border-radius: 20px;
+  border: 2px solid #FCD34D;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.btn-action-later:hover {
+  background: #FEF3C7;
+  color: #78350F;
+}
+
+.btn-action-contact {
+  background: #EBF5F5;
+  color: #1A6B70;
+  font-size: 1.15em;
+  font-weight: 800;
+  min-height: 72px;
+  border-radius: 20px;
+  border: 2px solid #BCD8CE;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  cursor: pointer;
+}
+.btn-action-contact:hover {
+  background: #D9EEEE;
+  color: #124B4F;
+}
+
+/* Today's Medication Schedule Items */
+.schedule-item-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  transition: border-color 0.2s ease;
+}
+.schedule-item-card.is-taken {
+  border-color: var(--border-success);
+  background: #F9FCFA;
+}
+.schedule-item-card.is-pending {
+  border-color: var(--border-warning);
+}
+
+.schedule-item-pill-icon {
+  width: 68px;
+  height: 68px;
+  border-radius: 16px;
+  background: var(--bg-warm);
+  border: 1px solid var(--border-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 8px;
+}
+.schedule-item-pill-icon img,
+.schedule-item-pill-icon svg {
+  max-width: 100%;
+  max-height: 100%;
+}
+
+/* Pill Passport Grid */
+.pill-passport-card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-subtle);
+  border-radius: 20px;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.pill-passport-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-elevated);
+}
+
+.pill-passport-visual-header {
+  background: var(--bg-warm);
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-bottom: 1px solid var(--border-subtle);
+  min-height: 160px;
+}
+.pill-passport-visual-header img,
+.pill-passport-visual-header svg {
+  max-width: 140px;
+  max-height: 110px;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.06));
+}
+
+.pill-trait-badge {
+  background: var(--bg-warm);
+  border: 1px solid var(--border-subtle);
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.88em;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* Guardian Connection Banner */
+.guardian-status-pill {
+  background: #E8F5E9;
+  border: 1px solid #C8E6C9;
+  color: #2E7D32;
+  border-radius: 30px;
+  padding: 6px 16px;
+  font-weight: 700;
+  font-size: 0.9em;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Daily Progress Bar */
+.daily-progress-box {
+  background: var(--bg-card);
+  border: 1px solid var(--border-subtle);
+  border-radius: 18px;
+  padding: 20px;
+}
+.progress-elderly {
+  height: 22px;
+  border-radius: 12px;
+  background-color: #E2E8F0;
+  overflow: hidden;
+}
+.progress-elderly .progress-bar {
+  background-color: var(--sage-primary);
+  font-size: 0.85em;
+  font-weight: 800;
+}

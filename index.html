@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MediTrack – Your Family's Medication Companion</title>
+  <meta name="description" content="An accessible, elderly-first healthcare web application for managing daily medicines, adherence monitoring, and remote family caregiving.">
+
+  <!-- Google Fonts: Nunito & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+
+  <!-- MediTrack Styles -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/patient.css">
+  <link rel="stylesheet" href="css/guardian.css">
+  <link rel="stylesheet" href="css/components.css">
+</head>
+<body class="font-normal">
+
+  <!-- Accessible Skip Link -->
+  <a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <!-- Offline Banner -->
+  <div id="offlineBanner" class="offline-banner text-center" role="alert">
+    <i class="bi bi-wifi-off me-2"></i>
+    <strong>Working Offline:</strong> Your medication confirmations are being saved locally and will automatically synchronize when connectivity returns.
+  </div>
+
+  <!-- Top App Header -->
+  <header class="app-header">
+    <div class="container-fluid px-lg-5">
+      <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+        
+        <!-- Brand Title & Tagline -->
+        <div class="d-flex align-items-center gap-3">
+          <div class="rounded-circle text-white p-2 d-flex align-items-center justify-content-center shadow-sm" style="width: 52px; height: 52px; background: #1A6B70;">
+            <i class="bi bi-heart-pulse-fill fs-3 text-white"></i>
+          </div>
+          <div>
+            <h1 class="h3 fw-bold mb-0 text-dark" data-i18n="app_name">MediTrack</h1>
+            <p class="small text-muted mb-0 d-none d-sm-block" data-i18n="app_tagline">Your Family's Medication Companion</p>
+          </div>
+        </div>
+
+        <!-- Elderly Accessibility & User Settings Controls -->
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+          
+          <!-- Font Size Switcher -->
+          <div class="btn-group" role="group" aria-label="Text Size Options">
+            <button class="btn btn-sm btn-outline-secondary fw-bold" data-font-size="normal" title="Normal Font Size (18px)">A</button>
+            <button class="btn btn-sm btn-outline-secondary fw-bold fs-6" data-font-size="large" title="Large Font Size (21px)">A+</button>
+            <button class="btn btn-sm btn-outline-secondary fw-bold fs-5" data-font-size="xlarge" title="Extra Large Font Size (24px)">A++</button>
+          </div>
+
+          <!-- High Contrast Mode Toggle -->
+          <button id="toggleHighContrastBtn" class="a11y-btn d-flex align-items-center gap-1" title="Toggle High Contrast Mode" aria-label="Toggle High Contrast">
+            <i class="bi bi-circle-half"></i>
+            <span class="d-none d-md-inline" data-i18n="high_contrast">High Contrast</span>
+          </button>
+
+          <!-- Regional Language Switcher (English & Hindi) -->
+          <div class="d-flex align-items-center gap-1">
+            <i class="bi bi-translate text-secondary"></i>
+            <select id="globalLanguageSelect" class="form-select form-select-sm fw-bold border-secondary" aria-label="Select Language">
+              <option value="en">English (US)</option>
+              <option value="hi">हिंदी (Hindi)</option>
+            </select>
+          </div>
+
+          <!-- In-App Notification Bell -->
+          <div class="dropdown" id="notificationDropdownContainer">
+            <button class="btn btn-light border position-relative rounded-circle p-2" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="Notifications" aria-label="View notifications">
+              <i class="bi bi-bell-fill fs-5 text-secondary"></i>
+              <span id="notificationBadge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+                0
+              </span>
+            </button>
+            <ul id="notificationList" class="dropdown-menu dropdown-menu-end shadow-lg p-0" style="width: 320px; max-height: 400px; overflow-y: auto;">
+              <li class="p-3 text-center text-muted">No notifications</li>
+            </ul>
+          </div>
+
+          <!-- Emergency Medical Card Trigger Button -->
+          <button class="btn btn-danger fw-bold rounded-pill px-3 py-2 d-flex align-items-center gap-2 shadow-sm" onclick="window.patientPortal.openEmergencyCard()" aria-label="Open Emergency Medical Card">
+            <i class="bi bi-file-medical-fill fs-5"></i>
+            <span class="d-none d-md-inline">Emergency Card</span>
+          </button>
+
+          <!-- Active User Profile Chip & Logout Button -->
+          <div id="userHeaderProfile" class="d-flex align-items-center gap-2 d-none">
+            <span class="user-profile-chip" id="userProfileChip">
+              <span id="userProfileAvatar">👴</span>
+              <span id="userProfileName">Ramesh Sharma</span>
+              <span id="userProfileRoleBadge" class="badge bg-success ms-1">Patient</span>
+            </span>
+            <button id="logoutBtn" class="btn-logout" title="Sign out of current account" aria-label="Log Out">
+              <i class="bi bi-box-arrow-right me-1"></i>
+              <span class="d-none d-sm-inline">Log Out</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content Container -->
+  <main id="main-content" class="container-fluid px-lg-5 py-4">
+
+    <!-- ============================================================== -->
+    <!-- 0. PROPER AUTHENTICATION PORTAL (FIRST PAGE USERS SEE) -->
+    <!-- ============================================================== -->
+    <div id="portal-auth" class="portal-view">
+      <div class="auth-wrapper">
+        <div class="auth-card">
+          <div class="auth-header-strip">
+            <div class="d-inline-flex p-3 rounded-circle bg-white text-teal mb-3 shadow-sm">
+              <i class="bi bi-heart-pulse-fill fs-2" style="color: #1A6B70;"></i>
+            </div>
+            <h2 class="fw-bold mb-1 text-white">MediTrack Portal</h2>
+            <p class="mb-0 text-white-50">Your Family's Medication Companion</p>
+          </div>
+
+          <!-- Auth Navigation Tabs: Sign In | Create Account | Forgot Password -->
+          <div class="auth-nav-tabs" role="tablist">
+            <button class="auth-tab-btn active" data-auth-tab="signin" id="tabBtnSignIn" type="button" role="tab">
+              <i class="bi bi-box-arrow-in-right me-1"></i> Sign In
+            </button>
+            <button class="auth-tab-btn" data-auth-tab="register" id="tabBtnRegister" type="button" role="tab">
+              <i class="bi bi-person-plus me-1"></i> Register
+            </button>
+            <button class="auth-tab-btn" data-auth-tab="forgot" id="tabBtnForgot" type="button" role="tab">
+              <i class="bi bi-key me-1"></i> Forgot Password
+            </button>
+          </div>
+
+          <div class="auth-body">
+            <!-- Form Alert Notifications -->
+            <div id="authAlert" class="alert d-none" role="alert"></div>
+
+            <!-- 1. SIGN IN FORM -->
+            <form id="signInForm">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Email Address</label>
+                <input type="email" id="loginEmail" class="form-control form-control-lg" placeholder="name@example.com" value="ramesh@meditrack.demo" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Password</label>
+                <input type="password" id="loginPassword" class="form-control form-control-lg" placeholder="••••••••" value="demo123" required />
+              </div>
+              <div class="mb-4">
+                <label class="form-label fw-bold">Account Role</label>
+                <select id="loginRoleHint" class="form-select form-select-lg">
+                  <option value="patient">👴 Patient (Ramesh Sharma)</option>
+                  <option value="guardian">👩‍💼 Family Guardian / Caregiver (Priya Sharma)</option>
+                  <option value="admin">⚙️ Healthcare Administrator</option>
+                </select>
+              </div>
+              <button type="submit" class="btn btn-elderly btn-elderly-teal w-100 mb-2">
+                <i class="bi bi-box-arrow-in-right fs-4"></i> Sign In to Portal
+              </button>
+            </form>
+
+            <!-- 2. REGISTER FORM -->
+            <form id="registerForm" class="d-none">
+              <div class="mb-3">
+                <label class="form-label fw-bold">Full Name</label>
+                <input type="text" id="regFullName" class="form-control form-control-lg" placeholder="e.g. Ramesh Sharma" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Email Address</label>
+                <input type="email" id="regEmail" class="form-control form-control-lg" placeholder="name@example.com" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Password</label>
+                <input type="password" id="regPassword" class="form-control form-control-lg" placeholder="At least 6 characters" required />
+              </div>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Account Role</label>
+                <div class="row g-2">
+                  <div class="col-6">
+                    <div class="form-check p-3 border rounded-3 bg-light">
+                      <input class="form-check-input" type="radio" name="regRole" id="rolePatient" value="patient" checked>
+                      <label class="form-check-label fw-bold" for="rolePatient">
+                        👴 Patient
+                      </label>
+                    </div>
+                  </div>
+                  <div class="col-6">
+                    <div class="form-check p-3 border rounded-3 bg-light">
+                      <input class="form-check-input" type="radio" name="regRole" id="roleGuardian" value="guardian">
+                      <label class="form-check-label fw-bold" for="roleGuardian">
+                        👩‍💼 Guardian
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-3 d-none" id="regConnectionCodeGroup">
+                <label class="form-label fw-bold">Patient Connection Code (Optional)</label>
+                <input type="text" id="regConnectionCode" class="form-control font-monospace" placeholder="e.g. RAMESH-702" />
+                <small class="text-muted">Enter if your patient loved one has provided a pairing code.</small>
+              </div>
+              <button type="submit" class="btn btn-elderly btn-elderly-teal w-100 mb-2">
+                <i class="bi bi-person-check fs-4"></i> Create Account
+              </button>
+            </form>
+
+            <!-- 3. FORGOT PASSWORD FORM -->
+            <form id="forgotPasswordForm" class="d-none">
+              <p class="text-secondary mb-3">
+                Enter your registered email address and we will send you password reset instructions.
+              </p>
+              <div class="mb-3">
+                <label class="form-label fw-bold">Email Address</label>
+                <input type="email" id="forgotEmail" class="form-control form-control-lg" placeholder="name@example.com" required />
+              </div>
+              <button type="submit" class="btn btn-elderly btn-elderly-teal w-100 mb-2">
+                <i class="bi bi-envelope-check fs-4"></i> Send Password Reset Link
+              </button>
+            </form>
+
+            <!-- JUDGES & DEMO QUICK-LOGIN SECTION -->
+            <div class="judge-demo-box">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <strong class="text-dark"><i class="bi bi-award-fill text-warning me-1"></i> Demonstration & Judges Quick-Login</strong>
+                <span class="badge bg-warning text-dark">Fast-Track</span>
+              </div>
+              <p class="small text-secondary mb-3">Click any verified test profile below to access its authenticated role dashboard:</p>
+
+              <button type="button" class="btn-judge-quick" onclick="window.app.quickLogin('patient')">
+                <span>👴 <strong>Ramesh Sharma (Patient)</strong> &bull; Age 74</span>
+                <span class="badge bg-success">Patient Portal &rarr;</span>
+              </button>
+
+              <button type="button" class="btn-judge-quick" onclick="window.app.quickLogin('guardian')">
+                <span>👩‍💼 <strong>Priya Sharma (Guardian)</strong> &bull; Daughter</span>
+                <span class="badge bg-teal text-white">Guardian Portal &rarr;</span>
+              </button>
+
+              <button type="button" class="btn-judge-quick" onclick="window.app.quickLogin('admin')">
+                <span>⚙️ <strong>Dr. Ananya Sen (Admin)</strong> &bull; System</span>
+                <span class="badge bg-secondary">Admin Hub &rarr;</span>
+              </button>
+            </div>
+
+            <!-- SUPABASE AUTH STATUS BADGE -->
+            <div id="authBackendStatus" class="mt-3 text-center small">
+              <!-- Rendered dynamically -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 1. PATIENT PORTAL -->
+    <!-- ============================================================== -->
+    <div id="portal-patient" class="portal-view">
+
+      <!-- Patient Header Greeting & Guardian Status -->
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <h2 id="patientGreetingText" class="display-6 fw-bold mb-1 text-dark">Good morning, Ramesh-ji!</h2>
+          <div id="patientDateText" class="fs-5 text-muted">Today is Saturday, November 21, 2026</div>
+        </div>
+        <div id="patientGuardianStatus">
+          <!-- Dynamic Connected Guardian Pill -->
+        </div>
+      </div>
+
+      <!-- Patient Navigation Pills (6 Tabs) -->
+      <nav class="patient-nav-tabs" aria-label="Patient Portal Navigation">
+        <button class="nav-link active" data-tab="home">
+          <i class="bi bi-house-door-fill"></i> <span data-i18n="nav_home">Home</span>
+        </button>
+        <button class="nav-link" data-tab="medicines">
+          <i class="bi bi-capsule"></i> <span data-i18n="nav_medicines">My Medicines</span>
+        </button>
+        <button class="nav-link" data-tab="schedule">
+          <i class="bi bi-calendar-week"></i> <span data-i18n="nav_schedule">My Schedule</span>
+        </button>
+        <button class="nav-link" data-tab="progress">
+          <i class="bi bi-graph-up-arrow"></i> <span data-i18n="nav_progress">My Progress</span>
+        </button>
+        <button class="nav-link" data-tab="prescriptions">
+          <i class="bi bi-file-earmark-medical"></i> <span data-i18n="nav_prescriptions">My Prescriptions</span>
+        </button>
+        <button class="nav-link" data-tab="settings">
+          <i class="bi bi-gear-fill"></i> <span data-i18n="nav_settings">Settings</span>
+        </button>
+      </nav>
+
+      <!-- Signature Feature: Voice Assistant Panel -->
+      <section class="voice-assistant-panel" aria-label="MediTrack Voice Companion">
+        <div class="d-flex flex-column flex-md-row align-items-center gap-4">
+          <!-- Microphone Button -->
+          <button id="voiceMicBtn" class="voice-mic-btn" aria-label="Tap to speak with voice assistant" title="Tap to speak">
+            <i class="bi bi-mic-fill"></i>
+          </button>
+
+          <!-- Voice Transcript & Guidance -->
+          <div class="flex-grow-1 text-center text-md-start">
+            <div class="d-flex align-items-center justify-content-center justify-content-md-start gap-2 mb-2">
+              <span class="badge bg-white text-dark fw-bold fs-6 px-3 py-1">
+                <i class="bi bi-soundwave text-teal me-1"></i> Voice Assistant (English & हिंदी)
+              </span>
+              <span class="text-white-50 small">Web Speech API</span>
+            </div>
+
+            <div id="voiceTranscript" class="voice-transcript-bubble mb-2">
+              Tap the microphone to speak, or click any voice command below.
+            </div>
+
+            <div id="voiceAssistantResponse" class="p-2 px-3 rounded-3 bg-white text-dark fw-bold d-none fs-6 mb-2">
+              <!-- Assistant Spoken Response Text -->
+            </div>
+
+            <!-- Voice Quick Simulation Chips -->
+            <div class="voice-simulation-chips justify-content-center justify-content-md-start">
+              <button class="voice-sim-chip" onclick="window.app.simulateVoice('What is my next medicine?')">
+                <i class="bi bi-chat-quote me-1"></i> "What is my next medicine?"
+              </button>
+              <button class="voice-sim-chip" onclick="window.app.simulateVoice('What medicines do I have today?')">
+                <i class="bi bi-chat-quote me-1"></i> "What medicines do I have today?"
+              </button>
+              <button class="voice-sim-chip" onclick="window.app.simulateVoice('I have taken my medicine')">
+                <i class="bi bi-check-circle me-1"></i> "I have taken my medicine"
+              </button>
+              <button class="voice-sim-chip" onclick="window.app.simulateVoice('मेरी अगली दवा क्या है?')">
+                <i class="bi bi-chat-quote me-1"></i> "मेरी अगली दवा क्या है?"
+              </button>
+              <button class="voice-sim-chip" onclick="window.app.simulateVoice('Remind me later')">
+                <i class="bi bi-alarm me-1"></i> "Remind me later"
+              </button>
+              <button class="voice-sim-chip" onclick="window.app.simulateVoice('Call my guardian')">
+                <i class="bi bi-telephone me-1"></i> "Call my guardian"
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- PATIENT TAB 1: HOME -->
+      <div id="patient-tab-home" class="patient-tab-content">
+        <!-- Next Scheduled Medicine Hero Card -->
+        <div id="heroNextDoseContainer">
+          <!-- Rendered via patient-portal.js -->
+        </div>
+
+        <div class="row g-4 mt-1">
+          <!-- Dose Routine Summary Counts -->
+          <div class="col-lg-5">
+            <h3 class="fw-bold fs-4 mb-3" data-i18n="doses_today">Today's Routine</h3>
+            <div id="patientDoseCounts"></div>
+          </div>
+
+          <!-- Today's Schedule Overview List -->
+          <div class="col-lg-7">
+            <h3 class="fw-bold fs-4 mb-3" data-i18n="schedule_title">Today's Medication Schedule</h3>
+            <div id="todayScheduleList"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PATIENT TAB 2: PILL PASSPORT -->
+      <div id="patient-tab-medicines" class="patient-tab-content d-none">
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-2 mb-4">
+          <div>
+            <h2 class="fw-bold fs-3 mb-1" data-i18n="passport_title">Pill Passport (Visual Medicine Guide)</h2>
+            <p class="text-muted fs-6 mb-0" data-i18n="passport_subtitle">Visual reference photographs and details to help identify your daily medicines.</p>
+          </div>
+          <span class="badge bg-light text-secondary border p-2 px-3 fs-6">
+            <i class="bi bi-lock-fill me-1"></i> View Only (Prescribed by Doctor)
+          </span>
+        </div>
+
+        <div id="pillPassportGrid" class="row">
+          <!-- Rendered via patient-portal.js -->
+        </div>
+      </div>
+
+      <!-- PATIENT TAB 3: SCHEDULE -->
+      <div id="patient-tab-schedule" class="patient-tab-content d-none">
+        <h2 class="fw-bold fs-3 mb-3" data-i18n="schedule_title">Today's Medication Schedule</h2>
+        <div id="patientScheduleFullList"></div>
+      </div>
+
+      <!-- PATIENT TAB 4: PROGRESS & HEATMAP -->
+      <div id="patient-tab-progress" class="patient-tab-content d-none">
+        <div class="mb-4">
+          <h2 class="fw-bold fs-3 mb-1" data-i18n="memory_map_title">Medication Memory Map</h2>
+          <p class="text-muted fs-6 mb-0" data-i18n="memory_map_subtitle">Simple monthly view of your medication routine and adherence.</p>
+        </div>
+
+        <!-- 30-Day Adherence Stats Row -->
+        <div id="patientAdherenceStats" class="mb-4"></div>
+
+        <!-- Calendar Heatmap Grid -->
+        <div id="patientHeatmapContainer"></div>
+
+        <div class="alert alert-secondary mt-3 p-3 rounded-3 small">
+          <i class="bi bi-info-circle-fill me-2"></i>
+          <span data-i18n="unconfirmed_clarification">Note: An unconfirmed dose indicates no button was pressed, not proof that the medicine was skipped.</span>
+        </div>
+      </div>
+
+      <!-- PATIENT TAB 5: PRESCRIPTIONS -->
+      <div id="patient-tab-prescriptions" class="patient-tab-content d-none">
+        <div class="mb-4">
+          <h2 class="fw-bold fs-3 mb-1" data-i18n="prescriptions_title">My Prescriptions Vault</h2>
+          <p class="text-muted fs-6 mb-0" data-i18n="prescriptions_subtitle">Doctor consultation slips and valid medical prescriptions stored by your family.</p>
+        </div>
+        <div id="patientPrescriptionsList"></div>
+      </div>
+
+      <!-- PATIENT TAB 6: SETTINGS -->
+      <div id="patient-tab-settings" class="patient-tab-content d-none">
+        <div class="card-soft mb-4">
+          <h3 class="fw-bold fs-4 mb-3"><i class="bi bi-shield-lock text-teal me-2"></i> Guardian Connection Code</h3>
+          <p class="text-secondary fs-6">Share this 6-character code with your daughter Priya or caregiver to link portals:</p>
+          <div class="p-3 bg-light border rounded-3 d-inline-block text-center mb-3">
+            <span id="patientSettingsCode" class="display-6 fw-bold text-teal font-monospace">RAMESH-702</span>
+          </div>
+          <div>
+            <button class="btn btn-elderly btn-elderly-teal btn-sm" onclick="alert('Code copied to clipboard: RAMESH-702')">
+              <i class="bi bi-clipboard me-1"></i> Copy Code
+            </button>
+          </div>
+        </div>
+
+        <div class="card-soft">
+          <h3 class="fw-bold fs-4 mb-3"><i class="bi bi-sliders text-teal me-2"></i> Accessibility & Display Preferences</h3>
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Text Size</label>
+              <div class="d-flex gap-2">
+                <button class="btn btn-outline-secondary" data-font-size="normal">Normal (18px)</button>
+                <button class="btn btn-outline-secondary" data-font-size="large">Large (21px)</button>
+                <button class="btn btn-outline-secondary" data-font-size="xlarge">Extra Large (24px)</button>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <label class="form-label fw-bold">Emergency Information</label>
+              <div>
+                <button class="btn btn-outline-danger" onclick="window.patientPortal.openEmergencyCard()">
+                  <i class="bi bi-file-medical-fill me-1"></i> View Emergency Medical Card
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 2. GUARDIAN PORTAL -->
+    <!-- ============================================================== -->
+    <div id="portal-guardian" class="portal-view d-none">
+
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-4">
+        <div>
+          <span class="badge bg-teal text-white fs-6 px-3 py-1 mb-2">
+            <i class="bi bi-shield-check me-1"></i> Authorized Primary Caregiver
+          </span>
+          <h2 class="display-6 fw-bold mb-1 text-dark" data-i18n="guardian_overview">Guardian Dashboard</h2>
+          <div class="text-muted fs-6">Monitoring: <strong>Ramesh Sharma (Father, Age 74)</strong></div>
+        </div>
+
+        <!-- 1-Click Doctor Visit PDF Generator -->
+        <div>
+          <button class="btn btn-elderly-teal" onclick="window.guardianPortal.exportDoctorPDF()">
+            <i class="bi bi-file-earmark-pdf-fill fs-5"></i>
+            <span>Download Doctor Visit Report (PDF)</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Guardian Navigation Pills -->
+      <nav class="guardian-nav-tabs" aria-label="Guardian Portal Navigation">
+        <button class="nav-link active" data-tab="overview">
+          <i class="bi bi-speedometer2"></i> <span>Overview & Status</span>
+        </button>
+        <button class="nav-link" data-tab="medicines">
+          <i class="bi bi-capsule"></i> <span>Manage Medicines</span>
+        </button>
+        <button class="nav-link" data-tab="stock">
+          <i class="bi bi-box-seam"></i> <span>Stock & Expiry</span>
+        </button>
+        <button class="nav-link" data-tab="prescriptions">
+          <i class="bi bi-file-medical"></i> <span>Prescription Vault</span>
+        </button>
+        <button class="nav-link" data-tab="adherence">
+          <i class="bi bi-calendar3"></i> <span>Adherence & Memory Map</span>
+        </button>
+        <button class="nav-link" data-tab="timeline">
+          <i class="bi bi-clock-history"></i> <span>Change Timeline</span>
+        </button>
+        <button class="nav-link" data-tab="connect">
+          <i class="bi bi-people"></i> <span>Guardian Connect</span>
+        </button>
+        <button class="nav-link" data-tab="followup">
+          <i class="bi bi-journal-text"></i> <span>Follow-Up Logs</span>
+        </button>
+      </nav>
+
+      <!-- Active Attention Alerts (Overdue, Low Stock, Expiry) -->
+      <div id="guardianAlertsContainer" class="mb-4"></div>
+
+      <!-- GUARDIAN TAB 1: OVERVIEW -->
+      <div id="guardian-tab-overview" class="guardian-tab-content">
+        <div class="row g-4 mb-4">
+          
+          <!-- Adherence Donut Chart -->
+          <div class="col-lg-5">
+            <div class="card-soft h-100">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">30-Day Adherence</h4>
+                <span class="badge bg-teal-subtle text-teal fs-6 px-3 py-1">Overall Routine</span>
+              </div>
+              <div style="position: relative; height: 230px;">
+                <canvas id="adherenceDonutChart"></canvas>
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center;">
+                  <span id="adherenceDonutPercentage" class="display-6 fw-bold text-dark">92%</span>
+                  <div class="small text-muted fw-bold">Compliance</div>
+                </div>
+              </div>
+              <div class="text-center mt-3 text-secondary small">
+                High adherence. 124 of 135 doses confirmed by patient on time.
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Patient Activity Feed -->
+          <div class="col-lg-7">
+            <div class="card-soft h-100">
+              <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4 class="fw-bold mb-0">Recent Patient Actions</h4>
+                <span class="badge bg-light text-dark border">Real-Time Sync</span>
+              </div>
+              <ul id="guardianRecentActivityList" class="list-group list-group-flush"></ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GUARDIAN TAB 2: MANAGE MEDICINES -->
+      <div id="guardian-tab-medicines" class="guardian-tab-content d-none">
+        <div id="guardianMedicinesList" class="row"></div>
+      </div>
+
+      <!-- GUARDIAN TAB 3: STOCK & EXPIRY -->
+      <div id="guardian-tab-stock" class="guardian-tab-content d-none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h4 class="fw-bold mb-1" data-i18n="stock_management_title">Medicine Stock & Expiry Guardian</h4>
+            <p class="text-muted small mb-0">Track remaining doses, refill thresholds, and expiring batches.</p>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="table-meditrack">
+            <thead>
+              <tr>
+                <th data-i18n="stock_table_medicine">Medicine</th>
+                <th data-i18n="stock_table_current">Current Qty</th>
+                <th data-i18n="stock_table_threshold">Reorder Level</th>
+                <th data-i18n="stock_table_days_left">Est. Days Left</th>
+                <th data-i18n="stock_table_expiry">Expiry Date</th>
+                <th data-i18n="stock_table_status">Status</th>
+                <th data-i18n="stock_table_actions">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="guardianStockTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- GUARDIAN TAB 4: PRESCRIPTION VAULT -->
+      <div id="guardian-tab-prescriptions" class="guardian-tab-content d-none">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h4 class="fw-bold mb-1">Prescription Vault</h4>
+            <p class="text-muted small mb-0">Consultation records, doctor slips, and linked medications.</p>
+          </div>
+          <button class="btn btn-elderly-teal btn-sm" onclick="window.guardianPortal.openUploadPrescriptionModal()">
+            <i class="bi bi-upload me-1"></i> Upload New Prescription
+          </button>
+        </div>
+        <div id="guardianPrescriptionVaultGrid" class="row"></div>
+      </div>
+
+      <!-- GUARDIAN TAB 5: ADHERENCE & MEMORY MAP -->
+      <div id="guardian-tab-adherence" class="guardian-tab-content d-none">
+        <h4 class="fw-bold mb-3">Medication Memory Map (Caregiver Detailed View)</h4>
+        <div id="guardianHeatmapContainer"></div>
+      </div>
+
+      <!-- GUARDIAN TAB 6: CHANGE TIMELINE -->
+      <div id="guardian-tab-timeline" class="guardian-tab-content d-none">
+        <h4 class="fw-bold mb-3" data-i18n="timeline_title">Medicine Change & Safety Timeline</h4>
+        <div id="guardianTimelineList" class="timeline-list"></div>
+      </div>
+
+      <!-- GUARDIAN TAB 7: GUARDIAN CONNECT & FAMILY CIRCLE -->
+      <div id="guardian-tab-connect" class="guardian-tab-content d-none">
+        <div class="row g-4">
+          <div class="col-md-6">
+            <div class="card-soft">
+              <h4 class="fw-bold mb-3">Connect to a New Patient</h4>
+              <p class="text-muted small">Enter the 6-digit pairing code generated by the patient's portal:</p>
+              <form id="pairPatientForm">
+                <div class="input-group mb-3">
+                  <input type="text" id="pairPatientCodeInput" class="form-control form-control-lg font-monospace text-uppercase" placeholder="e.g. RAMESH-702" required />
+                  <button type="submit" class="btn btn-elderly-teal">Connect</button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="card-soft">
+              <h4 class="fw-bold mb-3">Authorized Family Caregivers (Family Circle)</h4>
+              <div id="guardianFamilyGuardiansList"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GUARDIAN TAB 8: FOLLOW-UP LOGS -->
+      <div id="guardian-tab-followup" class="guardian-tab-content d-none">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h4 class="fw-bold mb-1" data-i18n="caregiver_log_title">Caregiver Follow-Up Log</h4>
+            <p class="text-muted small mb-0">Record phone calls, visits, doctor notes, and check-ins for Ramesh-ji.</p>
+          </div>
+          <button class="btn btn-elderly-teal btn-sm" data-bs-toggle="modal" data-bs-target="#caregiverLogModal">
+            <i class="bi bi-plus-circle me-1"></i> Add Follow-Up Log
+          </button>
+        </div>
+        <div id="caregiverLogsList"></div>
+      </div>
+
+    </div>
+
+    <!-- ============================================================== -->
+    <!-- 3. ADMIN PORTAL & DEMO HUB -->
+    <!-- ============================================================== -->
+    <div id="portal-admin" class="portal-view d-none">
+      <div class="card-soft mb-4">
+        <h2 class="display-6 fw-bold text-dark mb-1" data-i18n="admin_title">MediTrack Demonstration Hub</h2>
+        <p class="text-muted fs-6 mb-4" data-i18n="admin_sub">Simulate senior care scenarios, test role isolation, or reset system state.</p>
+        
+        <!-- System Metric Cards -->
+        <div id="adminStatsContainer" class="mb-4"></div>
+
+        <!-- Simulation Scenarios -->
+        <h4 class="fw-bold mb-3">Interactive Demonstration Scenarios</h4>
+        <div class="row g-3 mb-4">
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h5 class="fw-bold mb-1">Scenario 1: Patient Morning Routine</h5>
+              <p class="small text-muted mb-2">Simulates Ramesh-ji waking up with Metformin 500mg due right now.</p>
+              <button class="btn btn-outline-teal btn-sm" onclick="window.adminPortal.runScenario(1)">Run Scenario 1</button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h5 class="fw-bold text-danger mb-1">Scenario 2: Unconfirmed Dose Grace Period Lapse</h5>
+              <p class="small text-muted mb-2">Simulates 45-minute grace period elapsing without confirmation. Triggers Guardian alert with "Call Papa" option.</p>
+              <button class="btn btn-outline-danger btn-sm" onclick="window.adminPortal.runScenario(2)">Run Scenario 2</button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h5 class="fw-bold text-warning mb-1">Scenario 3: Critical Low Stock Alert</h5>
+              <p class="small text-muted mb-2">Atorvastatin Calcium drops to 5 tablets remaining (~5 days left).</p>
+              <button class="btn btn-outline-warning btn-sm" onclick="window.adminPortal.runScenario(3)">Run Scenario 3</button>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="p-3 border rounded-3 bg-light">
+              <h5 class="fw-bold text-secondary mb-1">Scenario 4: Reset Demo Data</h5>
+              <p class="small text-muted mb-2">Restores initial fictional data state for fresh demonstration.</p>
+              <button class="btn btn-outline-secondary btn-sm" onclick="window.adminPortal.runScenario(4)">Reset to Factory Demo</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fictional Accounts List -->
+        <h4 class="fw-bold mb-3">Configured Demo Accounts</h4>
+        <div id="adminAccountsList"></div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ============================================================== -->
+  <!-- MODAL DIALOGS -->
+  <!-- ============================================================== -->
+
+  <!-- 1. Confirm Taking Dose Modal -->
+  <div class="modal fade" id="confirmDoseModal" tabindex="-1" aria-labelledby="confirmDoseModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-3 border-success rounded-4 p-3">
+        <div class="modal-header border-0 pb-0">
+          <h3 class="modal-title fw-bold text-success fs-4" id="confirmDoseModalLabel">
+            <i class="bi bi-check-circle-fill me-2"></i> Confirm Taking Medicine
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center py-4">
+          <p class="fs-5 text-secondary mb-2" data-i18n="confirm_dose_msg">Did you just take this medicine as prescribed?</p>
+          <h2 id="confirmDoseMedName" class="display-6 fw-bold text-dark mb-3">Medicine Name</h2>
+          <div class="badge bg-light text-dark border fs-6 px-3 py-2 mb-3">
+            Exact time and date will be recorded and shared with Priya.
+          </div>
+        </div>
+        <div class="modal-footer border-0 justify-content-center gap-3">
+          <button type="button" class="btn btn-elderly btn-elderly-outline" data-bs-dismiss="modal" data-i18n="confirm_no">Cancel / Not Yet</button>
+          <button type="button" id="confirmDoseActionBtn" class="btn btn-elderly btn-action-taken px-4" data-i18n="confirm_yes">Yes, I Have Taken It</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Snooze Modal -->
+  <div class="modal fade" id="snoozeModal" tabindex="-1" aria-labelledby="snoozeModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 p-3">
+        <div class="modal-header border-0 pb-0">
+          <h3 class="modal-title fw-bold fs-4" id="snoozeModalLabel"><i class="bi bi-alarm-fill text-warning me-2"></i> Snooze Reminder</h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body text-center py-3">
+          <p class="fs-5 text-secondary">Choose when you would like MediTrack to remind you again:</p>
+          <div class="d-grid gap-3 mt-3">
+            <button class="btn btn-elderly btn-elderly-outline" onclick="window.patientPortal.applySnooze(15)">Snooze 15 Minutes</button>
+            <button class="btn btn-elderly btn-elderly-outline" onclick="window.patientPortal.applySnooze(30)">Snooze 30 Minutes</button>
+            <button class="btn btn-elderly btn-elderly-outline" onclick="window.patientPortal.applySnooze(60)">Snooze 1 Hour</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. Contact Guardian Modal -->
+  <div class="modal fade" id="contactGuardianModal" tabindex="-1" aria-labelledby="contactGuardianModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-3 border-teal rounded-4 p-3">
+        <div class="modal-header border-0 pb-0">
+          <h3 class="modal-title fw-bold fs-4 text-teal" id="contactGuardianModalLabel">
+            <i class="bi bi-telephone-fill me-2"></i> Contact Your Guardian
+          </h3>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body py-4 text-center">
+          <div class="mb-3">
+            <span style="font-size: 3.5rem;">👩‍💼</span>
+            <h3 class="fw-bold mb-0">Priya Sharma</h3>
+            <div class="text-muted fs-5">Daughter (बेटी) &bull; Primary Caregiver</div>
+          </div>
+          <div class="d-grid gap-3">
+            <a href="tel:+919876543210" class="btn btn-elderly btn-elderly-teal">
+              <i class="bi bi-telephone-outbound-fill"></i> Call Priya (+91 98765 43210)
+            </a>
+            <button class="btn btn-elderly btn-action-later" onclick="window.patientPortal.sendSOSMessage()">
+              <i class="bi bi-chat-heart-fill"></i> Send "Need Help with Medicine" Note
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4. Adjust Stock / Refill Modal (Guardian) -->
+  <div class="modal fade" id="adjustStockModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 p-3">
+        <div class="modal-header border-0">
+          <h4 class="modal-title fw-bold" id="adjustStockMedTitle">Adjust Stock</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label fw-bold">New Total Quantity (Units/Pills)</label>
+            <input type="number" id="adjustStockQty" class="form-control form-control-lg" min="0" required />
+          </div>
+          <div class="mb-3">
+            <label class="form-label fw-bold">Reason for Change / Pharmacy Reference</label>
+            <textarea id="adjustStockReason" class="form-control" rows="2" placeholder="e.g. Purchased 2 strips of 15 tablets from Apollo Pharmacy"></textarea>
+          </div>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" id="adjustStockSaveBtn" class="btn btn-elderly-teal">Save Stock Update</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Add New Medicine Modal (Guardian) -->
+  <div class="modal fade" id="addMedicineModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4 p-3">
+        <div class="modal-header border-0">
+          <h4 class="modal-title fw-bold">Add New Prescribed Medicine</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addMedicineForm">
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Brand Name</label>
+                <input type="text" id="medBrandName" class="form-control" placeholder="e.g. Glyciphage 500mg" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Generic / Scientific Name</label>
+                <input type="text" id="medGenericName" class="form-control" placeholder="e.g. Metformin Hydrochloride" />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Dosage Strength</label>
+                <input type="text" id="medDosage" class="form-control" placeholder="e.g. 500 mg" required />
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Medicine Form</label>
+                <select id="medType" class="form-select">
+                  <option value="Tablet">Tablet</option>
+                  <option value="Capsule">Capsule</option>
+                  <option value="Syrup">Syrup</option>
+                  <option value="Inhaler">Inhaler</option>
+                  <option value="Drops">Eye/Ear Drops</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="form-label fw-bold">Initial Quantity (Pills)</label>
+                <input type="number" id="medCurrentQty" class="form-control" value="30" min="1" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Pill Color</label>
+                <input type="text" id="medColor" class="form-control" placeholder="e.g. White" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Pill Shape</label>
+                <input type="text" id="medShape" class="form-control" placeholder="e.g. Oval Scored" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Schedule Slot</label>
+                <select id="medScheduleSlot" class="form-select">
+                  <option value="morning">Morning (8:30 AM)</option>
+                  <option value="afternoon">Afternoon (1:30 PM)</option>
+                  <option value="evening">Evening (6:30 PM)</option>
+                  <option value="night">Night Bedtime (9:30 PM)</option>
+                </select>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Scheduled Time</label>
+                <input type="time" id="medScheduleTime" class="form-control" value="08:30" />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Expiry Date</label>
+                <input type="date" id="medExpiryDate" class="form-control" value="2027-12-31" required />
+              </div>
+              <div class="col-md-6">
+                <label class="form-label fw-bold">Prescribing Doctor</label>
+                <input type="text" id="medDoctor" class="form-control" value="Dr. Rajesh Verma (Cardiologist)" />
+              </div>
+              <div class="col-12">
+                <label class="form-label fw-bold">Patient Instructions (How to take)</label>
+                <textarea id="medInstructions" class="form-control" rows="2" placeholder="e.g. Take with warm water after meals." required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-elderly-teal">Save Medicine to Regimen</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Upload Prescription Modal (Guardian) -->
+  <div class="modal fade" id="uploadPrescriptionModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 p-3">
+        <div class="modal-header border-0">
+          <h4 class="modal-title fw-bold">Upload Doctor Consultation Prescription</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="uploadPrescriptionForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Doctor's Full Name</label>
+              <input type="text" id="rxDrName" class="form-control" placeholder="e.g. Dr. Rajesh Verma" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Hospital / Clinic</label>
+              <input type="text" id="rxClinic" class="form-control" placeholder="e.g. Apollo Heart Centre" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Consultation Date</label>
+              <input type="date" id="rxDate" class="form-control" value="2026-11-21" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Diagnosis / Clinical Summary</label>
+              <input type="text" id="rxDiagnosis" class="form-control" placeholder="e.g. Essential Hypertension Routine Follow-up" required />
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Doctor's Notes & Advice</label>
+              <textarea id="rxNotes" class="form-control" rows="3" placeholder="Dietary restrictions, exercise, routine tests..."></textarea>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Prescription Document / Photo</label>
+              <input type="file" id="rxFile" class="form-control" accept="image/*,.pdf" />
+              <small class="text-muted">Supports JPG, PNG photos or PDF documents.</small>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-elderly-teal">Store Prescription</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Emergency Medical Card Modal -->
+  <div class="modal fade" id="emergencyCardModal" tabindex="-1" aria-labelledby="emergencyCardModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+      <div class="modal-content rounded-4 border-0 p-3">
+        <div class="modal-header border-0 pb-0">
+          <h4 class="modal-title fw-bold text-danger"><i class="bi bi-file-medical-fill me-2"></i> Emergency Medical Card</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="emergencyCardBody" class="modal-body"></div>
+        <div class="modal-footer border-0 justify-content-between">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-danger fw-bold" onclick="window.print()">
+            <i class="bi bi-printer-fill me-1"></i> Print Emergency Card
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Prescription Detail / Print Modal -->
+  <div class="modal fade" id="prescriptionDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 p-3">
+        <div class="modal-header border-0 pb-0">
+          <h4 class="modal-title fw-bold text-teal"><i class="bi bi-file-earmark-medical me-2"></i> Prescription Record</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="prescriptionDetailBody" class="modal-body"></div>
+        <div class="modal-footer border-0 justify-content-between">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-outline-teal" onclick="window.print()">
+            <i class="bi bi-printer me-1"></i> Print Prescription
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9. Heatmap Day Detail Modal -->
+  <div class="modal fade" id="adherenceDayModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 p-3">
+        <div class="modal-header border-0 pb-0">
+          <h4 class="modal-title fw-bold" id="adherenceDayModalTitle">Dose Records</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div id="adherenceDayModalBody" class="modal-body py-3"></div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 10. Caregiver Follow-Up Log Modal -->
+  <div class="modal fade" id="caregiverLogModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content rounded-4 p-3">
+        <div class="modal-header border-0">
+          <h4 class="modal-title fw-bold">Record Caregiver Follow-Up Action</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <form id="addCaregiverLogForm">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-bold">Action Type</label>
+              <select id="cgActionType" class="form-select">
+                <option value="Phone Call Check-in">Phone Call Check-in</option>
+                <option value="In-Person Home Visit">In-Person Home Visit</option>
+                <option value="Medicine Refill Purchased">Medicine Refill Purchased</option>
+                <option value="Doctor Appointment Discussion">Doctor Appointment Discussion</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold">Notes & Patient Feedback</label>
+              <textarea id="cgNotes" class="form-control" rows="3" placeholder="e.g. Spoke with Papa. He took his evening medicine and had a comfortable walk in the garden." required></textarea>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="cgFollowUpCheck" />
+              <label class="form-check-label fw-bold" for="cgFollowUpCheck">Requires further follow-up tomorrow</label>
+            </div>
+          </div>
+          <div class="modal-footer border-0">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-elderly-teal">Save Log Entry</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- 11. Unauthorized Access Modal -->
+  <div class="modal fade" id="unauthorizedModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-3 border-danger rounded-4 p-4 text-center">
+        <div class="modal-body py-3">
+          <i class="bi bi-shield-lock-fill text-danger mb-3" style="font-size: 3.5rem;"></i>
+          <h3 class="fw-bold text-danger mb-2">Access Restricted</h3>
+          <p class="fs-6 text-secondary mb-4" id="unauthorizedMsg">
+            You do not have permission to access this section with your current account role.
+          </p>
+          <button type="button" class="btn btn-elderly btn-elderly-teal" data-bs-dismiss="modal" onclick="window.app.redirectToAuthorizedPortal()">
+            <i class="bi bi-arrow-left me-1"></i> Return to Authorized Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- External CDN Libraries -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.2/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
+  <!-- Supabase JS Client Library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Modular MediTrack Application Scripts -->
+  <script src="js/config.js"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/state.js"></script>
+  <script src="js/voice.js"></script>
+  <script src="js/notifications.js"></script>
+  <script src="js/adherence.js"></script>
+  <script src="js/pdf-report.js"></script>
+  <script src="js/patient-portal.js"></script>
+  <script src="js/guardian-portal.js"></script>
+  <script src="js/admin-portal.js"></script>
+  <script src="js/app.js"></script>
+
+</body>
+</html>
