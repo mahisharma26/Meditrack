@@ -2,19 +2,9 @@
   "name": "meditrack",
   "version": "1.0.0",
   "description": "MediTrack - Your Family's Medication Companion (Elderly-First Healthcare App)",
+  "private": true,
   "scripts": {
-    "start": "node dev-server.js",
-    "build": "node verify.js"
-  },
-  "keywords": [
-    "elderly",
-    "healthcare",
-    "medication",
-    "accessibility",
-    "wcag",
-    "hindi",
-    "voice-assistant"
-  ],
-  "author": "Google DeepMind / MediTrack Team",
-  "license": "MIT"
+    "test": "node test_auth_flow.js",
+    "verify": "node verify.js"
+  }
 }
