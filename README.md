@@ -140,7 +140,7 @@ node test_auth_flow.js
 
 Start the local server:
 ```powershell
-node server.js
+node dev-server.js
 ```
 Then visit: `http://localhost:3000` (or `http://127.0.0.1:3000`).
 
