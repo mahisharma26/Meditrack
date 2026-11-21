@@ -1,5 +1,9 @@
 # MediTrack – Your Family's Medication Companion
 
+[![Live Demo](https://img.shields.io/badge/Live_Demo-Vercel-success?style=for-the-badge&logo=vercel)](https://meditrack-vtw8-hl12g7nw8-mahisharma26.vercel.app/)
+[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github)](https://github.com/mahisharma26/Meditrack)
+
+> **Live Production Website:** [https://meditrack-vtw8-hl12g7nw8-mahisharma26.vercel.app/](https://meditrack-vtw8-hl12g7nw8-mahisharma26.vercel.app/)  
 > An elderly-first, highly accessible healthcare web application designed to help senior patients manage their daily medicines with ease while allowing authorized family guardians to monitor routines, manage stock, and support patients remotely.
 
 ---
